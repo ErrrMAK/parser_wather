@@ -1,6 +1,29 @@
-months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
-for year in (2000, 2024):
-    year = str(year)
-    for month in months:
-        link = 'http://www.meteomanz.com/sy1?ty=hp&l=1&cou=6216&ind=13274&d1=02&m1=' + month + '&y1=' + year + '&h1=00Z&d2=12&m2=' + month + '&y2=' + year + '&h2=23Z'
-        print(link)
+import requests
+from bs4 import BeautifulSoup
+from selenium import webdriver
+import time
+import csv
+from selenium.webdriver.chrome.options import Options
+
+def get_items_urls(url):
+    #
+    with open(url, 'r', encoding='utf-8') as file:
+        html = file.read()
+
+    soup = BeautifulSoup(html, 'html.parser')
+
+    table = soup.find('table', {'class': 'data'})
+
+    if table:
+        rows = table.find_all('tr')
+        for row in rows:
+            cols = row.find_all('td')
+            cols = [col.text.strip() for col in cols]
+            print(cols)
+        return rows
+    else:
+        print('Table not found')
+
+
+url = 'wather04-2000.html'
+get_items_urls(url)

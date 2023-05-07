@@ -15,27 +15,32 @@ def csv_reader(massive):
     return list_ip
 
 
-def get_sourse_html(link, month, year):
-    #     # Открываем в браузере ссылку
-    #     driver = webdriver.Chrome(options=options)
-    # with open('IP.csv', 'r') as csvfile:
-    #     proxys = list(csv.reader(csvfile))
-    for proxy in ip_list:
-        options = webdriver.ChromeOptions()
-        options.add_argument(f"--proxy-server={proxy}")
-        print(proxy)
-        driver = webdriver.Chrome(options=options)
-        try:
-            driver.get(url=link)
-            time.sleep(2)
-            # Сохраняем страницу
-            file_html = "wather" + month + "-" + year + ".html"
-            with open(file_html, mode="w", encoding="utf-8") as file:
-                file.write(driver.page_source)
-        except Exception as _ex:
-            print(_ex)
-        finally:
-            driver.quit()
+def get_sourse_html():
+    # Запускаем перебор
+    ip_list = csv_reader(ip_file)
+    months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+    years = ['2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013',
+             '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023']
+    for i, year in enumerate(years):
+        for j, month in enumerate(months):
+            ip = ip_list[(i * len(months) + j) % len(ip_list)]
+            # Открываем в браузере ссылку
+            link = 'http://www.meteomanz.com/sy1?ty=hp&l=1&cou=6216&ind=13274&d1=02&m1=' + month + '&y1=' + year + '&h1=00Z&d2=12&m2=' + month + '&y2=' + year + '&h2=23Z'
+            options = webdriver.ChromeOptions()
+            options.add_argument(f"--proxy-server={ip}")
+            print(ip, year, month)
+            driver = webdriver.Chrome(options=options)
+            try:
+                driver.get(url=link)
+                time.sleep(2)
+                # Сохраняем страницу в файл
+                file_html = "wather" + month + "-" + year + ".html"
+                with open(file_html, mode="w", encoding="utf-8") as file:
+                    file.write(driver.page_source)
+            except Exception as _ex:
+                print(_ex)
+            finally:
+                driver.quit()
 
 
 # def get_items_urls(file_path):
@@ -51,19 +56,6 @@ def get_sourse_html(link, month, year):
 #         item_url = item.find('tr', )
 
 
-def main(month, year):
-    # Подготавливаем динамическую ссылку для циклов
-    get_sourse_html(
-        'http://www.meteomanz.com/sy1?ty=hp&l=1&cou=6216&ind=13274&d1=02&m1='
-        + month
-        + '&y1='
-        + year
-        + '&h1=00Z&d2=12&m2=01&y2=2000&h2=23Z'
-        , month, year)
-
-
 ip_file = 'working_ip.csv'
-ip_list = csv_reader(ip_file)
+get_sourse_html()
 
-if __name__ == "__main__":
-    main('2000', '01')

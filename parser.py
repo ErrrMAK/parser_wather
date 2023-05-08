@@ -1,4 +1,3 @@
-# Все еще get_items_urls выдает одну строку вместо массива
 # Нужно настроить проверку ip на 200
 # Еще нужно доделать сохранение в csv
 
@@ -61,19 +60,19 @@ def get_sourse_html():
 def get_items_urls(url):
     #
     with open(url, 'r', encoding='utf-8') as file:
-        html = file.read()
+        src = file.read()
 
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(src, 'lxml')
 
     table = soup.find('table', {'class': 'data'})
-
+    data = []
     if table:
         rows = table.find_all('tr')
         for row in rows:
             cols = row.find_all('td')
             cols = [col.text.strip() for col in cols]
-            print(cols)
-        return cols
+            data.append(cols)
+        return data[1:]
     else:
         print('Table not found')
 

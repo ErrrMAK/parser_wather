@@ -47,35 +47,40 @@ def get_sourse_html():
                 ip_address = ip_list[id_ip]
                 # Открываем в браузере ссылку
                 link = 'http://www.meteomanz.com/sy1?ty=hp&l=1&cou=6216&ind=13274&d1=01&m1=' + month + '&y1=' + year + '&h1=00Z&d2=31&m2=' + month + '&y2=' + year + '&h2=23Z'
-                response = os.system("ping -c 1 " + ip_address)
-                if response == 0:
-                    print(id_ip, '200')
+                # response = requests.get(link, proxies={'http': ip_address, 'https': ip_address}, timeout=6)
+                # if response == 0:
+                #     print(id_ip, '200')
+                #     break
+                # else:
+                #     id_ip += 1
+                #     print(id_ip, '400')
+                #     continue
+
+                options = webdriver.ChromeOptions()
+                # options.add_argument("--headless")
+                options.add_argument(f"--proxy-server={ip_address}")
+                print(ip_address, year, month)
+                driver = webdriver.Chrome(options=options)
+                try:
+                    driver.get(url=link)
+                    time.sleep(7)
+                    # Сохраняем страницу в файл
+                    file_html = "wather" + month + "-" + year + ".html"
+                    with open(file_html, mode="w", encoding="utf-8") as file:
+                        file.write(driver.page_source)
+                except Exception as _ex:
+                    print(_ex)
+                finally:
+                    driver.quit()
+                items_urls = get_items_urls(file_html)
+                if items_urls is not None:
+                    data += items_urls
                     break
                 else:
                     id_ip += 1
                     print(id_ip, '400')
                     continue
-
-            options = webdriver.ChromeOptions()
-            # options.add_argument("--headless")
-            options.add_argument(f"--proxy-server={ip_address}")
-            print(ip_address, year, month)
-            driver = webdriver.Chrome(options=options)
-            try:
-                driver.get(url=link)
-                time.sleep(7)
-                # Сохраняем страницу в файл
-                file_html = "wather" + month + "-" + year + ".html"
-                with open(file_html, mode="w", encoding="utf-8") as file:
-                    file.write(driver.page_source)
-            except Exception as _ex:
-                print(_ex)
-            finally:
-                driver.quit()
-            items_urls = get_items_urls(file_html)
-            if items_urls is not None:
-                data += items_urls
-            print(data)
+                print(data)
     return data
 
 

@@ -26,7 +26,7 @@ def check_proxys():
 
     # Транспонируем значения в столбец
     proxys_column = [[item] for item in proxys]
-    return proxys_column
+    return proxys_column, cnt_200, cnt_400
 
 def save_to_csv(data, directory):
     #Сорханяем список в файл
@@ -37,4 +37,6 @@ def save_to_csv(data, directory):
 
 
 proxys = check_proxys()
-save_to_csv(proxys, 'working_ip.csv')
+save_to_csv(proxys[0], 'working_ip.csv')
+print('cnt_200 =', proxys[1])
+print('cnt_400 =', proxys[2])

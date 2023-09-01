@@ -6,7 +6,7 @@ import asyncio
 # from ip_rotate import proxys
 
 # Создаем объект бота
-bot = telegram.Bot(token='5674190609:AAFfqNuRVyJJzU0_aOGiDy6e7S8Q5iPGtus')
+bot = telegram.Bot(token='xxx')
 
 # Отправляем сообщение
 async def send_message():
